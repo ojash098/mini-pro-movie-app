@@ -45,12 +45,11 @@ export default function Home() {
   });
 
   console.log(genres);
-  const genresMap = useMemo(() => {
-    if (!genres) return {};
-    return Object.fromEntries(
-      genres?.map((genre: genre) => [genre.id, genre.name]),
-    );
-  }, [genres]);
+  const genresMap: { [key: number]: string } = {};
+
+  genres?.forEach((genre: genre) => {
+    genresMap[genre.id] = genre.name;
+  });
 
   return (
     <main className="min-h-screen min-w-screen bg-[#000011] overflow-hidden">
