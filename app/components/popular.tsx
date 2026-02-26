@@ -4,7 +4,11 @@ import Card from "./card";
 import { useState } from "react";
 import Spinner from "./spinner";
 
-export default function AllMovies({ genresMap }: { genresMap: object }) {
+export default function AllMovies({
+  genresMap,
+}: {
+  genresMap: { [key: number]: string };
+}) {
   const [page, setPage] = useState<number>(1);
   const [sortby, setSortby] = useState("popularity.desc");
 
