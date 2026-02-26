@@ -1,58 +1,54 @@
 "use client";
 import Hero from "./components/hero";
 import Popular from "./components/popular";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 type genre = {
   id: number;
   name: string;
 };
-const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || "";
-const baseUrl = "https://api.themoviedb.org/3";
-const genre_url = `https://api.themoviedb.org/3/genre/movie/list?language=en&api_key=${API_KEY}`;
 
 export default function Home() {
   const [search, setSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>(search);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const { data: genres } = useQuery({
     queryKey: ["movie-genres"],
     queryFn: async () => {
-      const res = await fetch(genre_url);
-      const genres = await res.json();
-      if (!res.ok) {
-        throw new Error("Failed to fetch genres");
-      }
-      return genres.genres;
+      const res = await fetch("/api/genres");
+      return res.json();
     },
   });
 
   const { data: movieResults } = useQuery({
-    queryKey: ["search-movies", search],
+    queryKey: ["search-movies", debouncedSearch],
     queryFn: async () => {
-      if (search.trim() === "") return [];
-      const res = await fetch(
-        `${baseUrl}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
-          search
-        )}&language=en-US&page=1&include_adult=false`
-      );
+      if (debouncedSearch.trim() === "") return [];
+      const res = await fetch(`/api/search?query=${debouncedSearch}`);
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error("Failed to fetch search results");
-      }
-      return data.results;
+      console.log(data);
+      return data;
     },
-    enabled: search.trim() !== "",
+    enabled: debouncedSearch.trim() !== "",
   });
 
   console.log(genres);
   const genresMap = useMemo(() => {
-    if (!genres) return [];
+    if (!genres) return {};
     return Object.fromEntries(
-      genres?.map((genre: genre) => [genre.id, genre.name])
+      genres?.map((genre: genre) => [genre.id, genre.name]),
     );
   }, [genres]);
 
@@ -63,7 +59,7 @@ export default function Home() {
         handleSearch={handleSearch}
         movieresults={movieResults}
       />
-      <Popular baseUrl={baseUrl} genresMap={genresMap} API_KEY={API_KEY} />
+      <Popular genresMap={genresMap} />
     </main>
   );
 }

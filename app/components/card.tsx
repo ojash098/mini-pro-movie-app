@@ -46,12 +46,14 @@ export default function Card({
             />
           </span>
           <span className="line-clamp-1 wrap-break-words">
-            {(movie.genre_ids || []).map((id: number, idx: number) => (
-              <span className="text-[#9CA4AB] px-1 text-sm" key={idx}>
-                {"• "}
-                {genresMap[id]}
-              </span>
-            ))}
+            {(movie.genre_ids || []).map((id: number, idx: number) => {
+              return (
+                <span className="text-[#9CA4AB] px-1 text-sm" key={idx}>
+                  {"• "}
+                  {genresMap[id]}
+                </span>
+              );
+            })}
           </span>
         </div>
       </div>

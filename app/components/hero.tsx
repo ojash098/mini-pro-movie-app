@@ -48,7 +48,7 @@ function Hero({
         {search && (
           <div>
             <div className="absolute top-13 left-0 w-full max-h-[300px] bg-gradient-to-r from-[#22124e] to-[#371688] z-10 rounded overflow-y-scroll">
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-2 p-2">
                 {movieresults && movieresults.length > 0 ? (
                   movieresults.map((movie: any, idx: number) => (
                     <li
