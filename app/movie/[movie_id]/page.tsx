@@ -89,7 +89,6 @@ export default function MoviePage() {
             <Image
               src={`https://image.tmdb.org/t/p/w1280${movie_details.backdrop_path}`}
               alt={movie_details.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               width={1280}
               height={720}
               className="h-full w-full rounded-3xl object-cover object-center"
